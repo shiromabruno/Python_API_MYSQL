@@ -1,9 +1,5 @@
-from flask import Flask, request, jsonify
-import json
 import mysql.connector 
 from mysql.connector import Error
-
-app = Flask(__name__)
 
 def db_test_connection():
     try:
@@ -209,8 +205,8 @@ if __name__ == "__main__":
     #db_test_connection()
     #db_create_table_employee()
     #db_drop_table_employee()
-    #db_alter_table_employee()
-    db_select_table_employee()
+    db_alter_table_employee()
+    #db_select_table_employee()
     #db_insert_table_employee()
     #db_delete_table_employee()
     #db_update_table_employee()
