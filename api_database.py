@@ -33,7 +33,7 @@ def db_create_table_employee():
 
         #CREATE TABLE IF NOT EXISTS 
         mySql_Table_Query = """CREATE TABLE Employee ( 
-                             Id int(11) NOT NULL,
+                             Id int(11) NOT NULL AUTO_INCREMENT,
                              Name varchar(60) NOT NULL,
                              Address varchar(250),
                              Birth Date NOT NULL,
@@ -82,9 +82,10 @@ def db_alter_table_employee():
                                          user='root',
                                          password='')
 
-        #mySql_Table_Query = """ALTER TABLE Employee ADD Email2 varchar(100)"""
+        #mySql_Table_Query = """ALTER TABLE Employee ADD Email varchar(50)"""
         #mySql_Table_Query = """ALTER TABLE Employee MODIFY COLUMN Email int(11)"""
-        mySql_Table_Query = """ALTER TABLE Employee DROP COLUMN Email2"""
+        #mySql_Table_Query = """ALTER TABLE Employee DROP COLUMN Email2"""
+        mySql_Table_Query = """ALTER TABLE Employee AUTO_INCREMENT = 1, algorithm=inplace"""
        
         # ADD Email varchar(255);
         # DROP COLUMN column_name;
@@ -135,7 +136,7 @@ def db_delete_table_employee():
                                          user='root',
                                          password='')
 
-        mySql_Table_Query = """DELETE FROM Employee WHERE Id=1"""
+        mySql_Table_Query = """DELETE FROM Employee WHERE Id=10"""
         
         cursor = connection.cursor()
         cursor.execute(mySql_Table_Query)
@@ -159,9 +160,13 @@ def db_insert_table_employee():
                                          user='root',
                                          password='')
 
-        mySql_Table_Query = """INSERT INTO Employee values(
-1, "Bruno Shiroma", "Endereco Tiradentes 125", '1995-09-23', "Dados", "BrunoEmail@email.com")"""
-        
+        # se deixar com 10 no ID, vai adicionar 10 no MYSQL. Nao considera valor 1 no identity (caso tabela esteja vazia e o prox ID fosse o 1)
+        #mySql_Table_Query = """INSERT INTO Employee values(10, "Bruno Shiroma", "Endereco Tiradentes 125", '1995-09-23', "Dados", "BrunoEmail@email.com")"""
+        # porem, se tiver salvo na memoria o ultimo numero, mesmo que insira no numero desejado, a proxima vez que adicionar com 0, ficara no ultimo numero + 1
+        #   exemplo, tabela vazia e adicionei um registro e o ultimo adicionado foi o 11. Depois de deletar o 11, adicioneinovo registro com ID 0. Gravou na tabela o 12
+        # ALTER TABLE tablename AUTO_INCREMENT = 1
+        mySql_Table_Query = """INSERT INTO Employee values(0, "Bruno Shiroma", "Endereco Tiradentes 125", '1995-09-23', "Dados", "BrunoEmail@email.com")"""
+
         cursor = connection.cursor()
         cursor.execute(mySql_Table_Query)
         connection.commit()
@@ -206,8 +211,8 @@ if __name__ == "__main__":
     #db_test_connection()
     #db_create_table_employee()
     #db_drop_table_employee()
-    db_alter_table_employee()
+    #db_alter_table_employee()
     #db_select_table_employee()
-    #db_insert_table_employee()
+    db_insert_table_employee()
     #db_delete_table_employee()
     #db_update_table_employee()
