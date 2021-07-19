@@ -31,6 +31,7 @@ def db_create_table_employee():
                                          user='root',
                                          password='')
 
+        #CREATE TABLE IF NOT EXISTS 
         mySql_Table_Query = """CREATE TABLE Employee ( 
                              Id int(11) NOT NULL,
                              Name varchar(60) NOT NULL,
@@ -159,7 +160,7 @@ def db_insert_table_employee():
                                          password='')
 
         mySql_Table_Query = """INSERT INTO Employee values(
-1, "Bruno Shiroma", "Endereco Tiradentes 125", 1995-09-23, "Dados", "BrunoEmail@email.com")"""
+1, "Bruno Shiroma", "Endereco Tiradentes 125", '1995-09-23', "Dados", "BrunoEmail@email.com")"""
         
         cursor = connection.cursor()
         cursor.execute(mySql_Table_Query)
