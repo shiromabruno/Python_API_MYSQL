@@ -40,13 +40,29 @@ def employee():
     cursor = connection.cursor()
 
     if request.method == "GET":
-        cursor.execute("SELECT * FROM Employee")
-        selectquery = [
-            dict(Id=row[0], Name=row[1], Address=row[2], Birth=row[3], Department=row[4], Email=row[5])
-            for row in cursor.fetchall()
-        ]
+        try:
+            cursor.execute("SELECT * FROM Employee")
+            selectquery = [
+                dict(Id=row[0], Name=row[1], Address=row[2], Birth=row[3], Department=row[4], Email=row[5])
+                for row in cursor.fetchall()
+            ]
+        except Exception as e:
+            retorno_error = {
+                "Message: " : "Error during execution",
+                "Exception: " : e
+            }
+            cursor.close()
+            connection.close()
+            print("GET NOK. MySQL connection is closed")
+            return jsonify(retorno_error)
+
+        cursor.close()
+        connection.close()
+        print("GET OK. MySQL connection is closed")
+
         if selectquery is not None:
             return jsonify(selectquery)
+            
 
     if request.method == "POST":
 
@@ -59,15 +75,29 @@ def employee():
         new_department = body["department"]
         new_email = body["email"]
 
-        sql_insert = ("INSERT INTO Employee "
-       "(Id, Name,Address, Birth, Department, Email) "
-       "VALUES (%s, %s, %s, %s, %s, %s)")
-        tupla_user = (0, new_name, new_address, new_birth, new_department, new_email)
-        cursor.execute(sql_insert, tupla_user)
-        # cursor.execute(sql_insert, tupla_user) ---> dessa forma nao consegui fazer o last_id, dava objeto nonetype do lastrowid
-        connection.commit()
-        last_id = cursor.lastrowid
-    
+        try:
+            sql_insert = ("INSERT INTO Employee "
+            "(Id, Name,Address, Birth, Department, Email) "
+            "VALUES (%s, %s, %s, %s, %s, %s)")
+            tupla_user = (0, new_name, new_address, new_birth, new_department, new_email)
+            cursor.execute(sql_insert, tupla_user)
+            # cursor.execute(sql_insert, tupla_user) ---> dessa forma nao consegui fazer o last_id, dava objeto nonetype do lastrowid
+            connection.commit()
+            last_id = cursor.lastrowid
+        except Exception as e:
+            retorno_error = {
+                "Message: " : "Error during execution",
+                "Exception: " : e
+            }
+            cursor.close()
+            connection.close()
+            print("POST NOK. MySQL connection is closed")
+            return jsonify(retorno_error)
+
+        cursor.close()
+        connection.close()
+        print("POST OK. MySQL connection is closed")
+
         retorno_json={
             "Message": "Employee registered",
             "Employee_ID": last_id
@@ -82,20 +112,38 @@ def employee_id(id):
 
     if request.method == "GET":
         employee_result = None
-        sql = "SELECT * FROM Employee WHERE id = %s"
-        where = (id,)
-        cursor.execute(sql, where)
-        rows = cursor.fetchall()
+        try:
+            sql = "SELECT * FROM Employee WHERE id = %s"
+            where = (id,)
+            cursor.execute(sql, where)
+            rows = cursor.fetchall()
 
-        for r in rows:
-            employee_result = r
+            for r in rows:
+                employee_result = r
+
+        except Exception as e:
+            retorno_error = {
+                "Message: " : "Error during execution",
+                "Exception: " : e
+            }
+            cursor.close()
+            connection.close()
+            print("GETID NOK. MySQL connection is closed")
+            return jsonify(retorno_error)
+
         if employee_result is not None:
+            cursor.close()
+            connection.close()
+            print("GETID OK. MySQL connection is closed")
             return jsonify(employee_result), 200
         else:
             retorno_json={
             "Message": "Emloyee not found",
             "Employee_ID": id
         }
+            cursor.close()
+            connection.close()
+            print("GETID OK. MySQL connection is closed")
             return retorno_json, 404
 
     if request.method == "PUT":
@@ -110,35 +158,62 @@ def employee_id(id):
         new_department = body["department"]
         new_email = body["email"]
 
-        sql_update = ("UPDATE Employee SET Name = %s, Address = %s, Birth = %s, Department = %s, Email = %s WHERE Id = %s")
-        tupla_user = (new_name, new_address, new_birth, new_department, new_email, old_id)
-        cursor.execute(sql_update, tupla_user)
+        try:
+            sql_update = ("UPDATE Employee SET Name = %s, Address = %s, Birth = %s, Department = %s, Email = %s WHERE Id = %s")
+            tupla_user = (new_name, new_address, new_birth, new_department, new_email, old_id)
+            cursor.execute(sql_update, tupla_user)
         
-        connection.commit()
-        current_id = old_id
-    
+            connection.commit()
+            current_id = old_id
+
+        except Exception as e:
+            retorno_error = {
+                "Message: " : "Error during execution",
+                "Exception: " : e
+            }
+            cursor.close()
+            connection.close()
+            print("PUTID NOK. MySQL connection is closed")
+            return jsonify(retorno_error)
+
         retorno_json={
             "Message": "Employee updated",
             "Employee_ID": old_id,
             "Updated Fields" : body
         }
+        cursor.close()
+        connection.close()
+        print("PUTID OK. MySQL connection is closed")
         return retorno_json, 200
     
     if request.method == "DELETE":
 
-        sql_delete = ("DELETE FROM Employee WHERE Id = %s")
-        tupla_user = (id,)
-        cursor.execute(sql_delete, tupla_user)
         
-        connection.commit()
+        try:
+            sql_delete = ("DELETE FROM Employee WHERE Id = %s")
+            tupla_user = (id,)
+        
+            cursor.execute(sql_delete, tupla_user)
+            connection.commit()
+
+        except Exception as e:
+            retorno_error = {
+                "Message: " : "Error during execution",
+                "Exception: " : e
+            }
+            cursor.close()
+            connection.close()
+            print("DELID NOK. MySQL connection is closed")
+            return jsonify(retorno_error)
     
         retorno_json={
             "Message": "Employee deleted",
             "Employee_ID": id,
         }
+        cursor.close()
+        connection.close()
+        print("DELID OK. MySQL connection is closed")
         return retorno_json, 200
-
-       
 
 if __name__ == "__main__":
     app.run(debug=True)
