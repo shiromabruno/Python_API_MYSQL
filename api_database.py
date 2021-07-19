@@ -116,14 +116,35 @@ def db_select_table_employee():
         mySql_Table_Query = """SELECT * FROM Employee"""
         
         cursor = connection.cursor()
-        result = cursor.execute(mySql_Table_Query)
+        cursor.execute(mySql_Table_Query)
 
-        tuplas = [
-            dict(id=row[0], name=row[1], address=row[2], birth=row[3], department=row[4], email=row[5])
-            for row in result.fetchall()
-        ]
+        result = cursor.fetchall()
+    
+        print("Returning resultset: " + str(result))
+        
+    except Error as e:
+        print("Error while executing to MySQL", e)
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("MySQL connection is closed")
 
-        print("Returning resultset: " + tuplas)
+def db_delete_table_employee():
+    #Teste SELECT * FROM python_company.employee;
+    try:
+        connection = mysql.connector.connect(host='localhost',
+                                         database='python_company',
+                                         user='root',
+                                         password='')
+
+        mySql_Table_Query = """DELETE FROM Employee WHERE Id=1"""
+        
+        cursor = connection.cursor()
+        cursor.execute(mySql_Table_Query)
+        connection.commit()
+
+        print("Delete done")
         
     except Error as e:
         print("Error while executing to MySQL", e)
@@ -145,10 +166,34 @@ def db_insert_table_employee():
 1, "Bruno Shiroma", "Endereco Tiradentes 125", 1995-09-23, "Dados", "BrunoEmail@email.com")"""
         
         cursor = connection.cursor()
-        result = cursor.execute(mySql_Table_Query)
+        cursor.execute(mySql_Table_Query)
         connection.commit()
 
         print("Insert done")
+        
+    except Error as e:
+        print("Error while executing to MySQL", e)
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("MySQL connection is closed")
+
+def db_update_table_employee():
+    #Teste SELECT * FROM python_company.employee;
+    try:
+        connection = mysql.connector.connect(host='localhost',
+                                         database='python_company',
+                                         user='root',
+                                         password='')
+
+        mySql_Table_Query = """UPDATE Employee SET Name = "Nome Alterado" WHERE Id=1"""
+        
+        cursor = connection.cursor()
+        cursor.execute(mySql_Table_Query)
+        connection.commit()
+
+        print("Update done")
         
     except Error as e:
         print("Error while executing to MySQL", e)
@@ -167,3 +212,5 @@ if __name__ == "__main__":
     #db_alter_table_employee()
     db_select_table_employee()
     #db_insert_table_employee()
+    #db_delete_table_employee()
+    #db_update_table_employee()
