@@ -35,7 +35,7 @@ def db_connection():
         #     print("MySQL connection is closed")
 
 @app.route('/employee', methods=["GET", "POST"])
-def employees():
+def employee():
     connection = db_connection()
     cursor = connection.cursor()
 
@@ -73,6 +73,72 @@ def employees():
             "Employee_ID": last_id
         }
         return retorno_json, 201
+
+@app.route("/employee/<int:id>", methods=["GET", "PUT", "DELETE"])
+def employee_id(id):
+    connection = db_connection()
+    cursor = connection.cursor()
+   
+
+    if request.method == "GET":
+        employee_result = None
+        sql = "SELECT * FROM Employee WHERE id = %s"
+        where = (id,)
+        cursor.execute(sql, where)
+        rows = cursor.fetchall()
+
+        for r in rows:
+            employee_result = r
+        if employee_result is not None:
+            return jsonify(employee_result), 200
+        else:
+            retorno_json={
+            "Message": "Emloyee not found",
+            "Employee_ID": id
+        }
+            return retorno_json, 404
+
+    if request.method == "PUT":
+
+        body = request.json
+
+        old_id = id
+        new_name = body["name"]
+        new_address = body["address"]
+        new_birth_raw = body["birth"]
+        new_birth = datetime.strptime(new_birth_raw, '%Y-%m-%d').date()
+        new_department = body["department"]
+        new_email = body["email"]
+
+        sql_update = ("UPDATE Employee SET Name = %s, Address = %s, Birth = %s, Department = %s, Email = %s WHERE Id = %s")
+        tupla_user = (new_name, new_address, new_birth, new_department, new_email, old_id)
+        cursor.execute(sql_update, tupla_user)
+        
+        connection.commit()
+        current_id = old_id
+    
+        retorno_json={
+            "Message": "Employee updated",
+            "Employee_ID": old_id,
+            "Updated Fields" : body
+        }
+        return retorno_json, 200
+    
+    if request.method == "DELETE":
+
+        sql_delete = ("DELETE FROM Employee WHERE Id = %s")
+        tupla_user = (id,)
+        cursor.execute(sql_delete, tupla_user)
+        
+        connection.commit()
+    
+        retorno_json={
+            "Message": "Employee deleted",
+            "Employee_ID": id,
+        }
+        return retorno_json, 200
+
+       
 
 if __name__ == "__main__":
     app.run(debug=True)
