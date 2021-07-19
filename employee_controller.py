@@ -54,14 +54,14 @@ def employee():
             cursor.close()
             connection.close()
             print("GET NOK. MySQL connection is closed")
-            return jsonify(retorno_error)
+            return jsonify(retorno_error), 503
 
         cursor.close()
         connection.close()
         print("GET OK. MySQL connection is closed")
 
         if selectquery is not None:
-            return jsonify(selectquery)
+            return jsonify(selectquery), 200
             
 
     if request.method == "POST":
@@ -92,7 +92,7 @@ def employee():
             cursor.close()
             connection.close()
             print("POST NOK. MySQL connection is closed")
-            return jsonify(retorno_error)
+            return jsonify(retorno_error), 503
 
         cursor.close()
         connection.close()
@@ -129,7 +129,7 @@ def employee_id(id):
             cursor.close()
             connection.close()
             print("GETID NOK. MySQL connection is closed")
-            return jsonify(retorno_error)
+            return jsonify(retorno_error), 503
 
         if employee_result is not None:
             cursor.close()
@@ -174,7 +174,7 @@ def employee_id(id):
             cursor.close()
             connection.close()
             print("PUTID NOK. MySQL connection is closed")
-            return jsonify(retorno_error)
+            return jsonify(retorno_error), 503
 
         retorno_json={
             "Message": "Employee updated",
@@ -204,7 +204,7 @@ def employee_id(id):
             cursor.close()
             connection.close()
             print("DELID NOK. MySQL connection is closed")
-            return jsonify(retorno_error)
+            return jsonify(retorno_error), 503
     
         retorno_json={
             "Message": "Employee deleted",
