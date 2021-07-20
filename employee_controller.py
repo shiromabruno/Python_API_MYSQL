@@ -3,6 +3,7 @@ import json
 import mysql.connector 
 from mysql.connector import Error
 from datetime import datetime
+import database_service
 
 app = Flask(__name__)
 
@@ -67,6 +68,12 @@ def employee():
     if request.method == "POST":
 
         body = request.json
+
+        # if "name" or "address" or "birth" or "department" or "email" not in body:
+        #      retorno_error = {
+        #         "Message: " : "Must pass all fields: name, address, birth, department and email",
+        #      }
+        #      return jsonify(retorno_error), 400
 
         new_name = body["name"]
         new_address = body["address"]
@@ -150,6 +157,12 @@ def employee_id(id):
 
         body = request.json
 
+        # if ("name" or "address" or "birth" or "department" or "email") not in body:
+        #      retorno_error = {
+        #         "Message: " : "Must pass all fields: name, address, birth, department and email",
+        #      }
+        #      return jsonify(retorno_error), 400
+
         old_id = id
         new_name = body["name"]
         new_address = body["address"]
@@ -157,6 +170,13 @@ def employee_id(id):
         new_birth = datetime.strptime(new_birth_raw, '%Y-%m-%d').date()
         new_department = body["department"]
         new_email = body["email"]
+
+        if database_service.employee_exist(id) == False:
+            retorno_warning = {
+                "Message: " : "Employee not found",
+                "Employee ID" : id
+            }
+            return retorno_warning, 404
 
         try:
             sql_update = ("UPDATE Employee SET Name = %s, Address = %s, Birth = %s, Department = %s, Email = %s WHERE Id = %s")
@@ -188,7 +208,13 @@ def employee_id(id):
     
     if request.method == "DELETE":
 
-        
+        if database_service.employee_exist(id) == False:
+            retorno_warning = {
+                "Message: " : "Employee not found",
+                "Employee ID" : id
+            }
+            return retorno_warning, 404
+
         try:
             sql_delete = ("DELETE FROM Employee WHERE Id = %s")
             tupla_user = (id,)
