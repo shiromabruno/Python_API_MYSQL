@@ -69,11 +69,11 @@ def employee():
 
         body = request.json
 
-        # if "name" or "address" or "birth" or "department" or "email" not in body:
-        #      retorno_error = {
-        #         "Message: " : "Must pass all fields: name, address, birth, department and email",
-        #      }
-        #      return jsonify(retorno_error), 400
+        if "name" not in body or "address" not in body or "birth" not in body or "department" not in body or "email" not in body:
+             retorno_error = {
+                "Message: " : "Must pass all fields: name, address, birth, department and email",
+             }
+             return jsonify(retorno_error), 400
 
         new_name = body["name"]
         new_address = body["address"]
@@ -157,11 +157,11 @@ def employee_id(id):
 
         body = request.json
 
-        # if ("name" or "address" or "birth" or "department" or "email") not in body:
-        #      retorno_error = {
-        #         "Message: " : "Must pass all fields: name, address, birth, department and email",
-        #      }
-        #      return jsonify(retorno_error), 400
+        if "name" not in body or "address" not in body or "birth" not in body or "department" not in body or "email" not in body:
+             retorno_error = {
+                "Message: " : "Must pass all fields: name, address, birth, department and email",
+             }
+             return jsonify(retorno_error), 400
 
         old_id = id
         new_name = body["name"]
